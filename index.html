@@ -79,9 +79,18 @@
     <div id="status"></div>
 </div>
 <script>
-    let sentMessages = 0; // ژمارەی نامەی نێردراو
-    let maxMessages = 1000000; // ژمارەی ئەو نامانەی ئەتەوێ بینێری
+    let sentMessages = 0; // عدد الرسائل المرسلة
+    let maxMessages = 1000000; // الحد الأقصى من الرسائل التي تريد إرسالها
     let interval;
+
+    function generateRandomUserAgent() {
+        const browsers = ["Chrome", "Firefox", "Safari", "Edge", "Opera"];
+        const os = ["Windows NT 10.0", "Windows NT 6.1", "Macintosh; Intel Mac OS X 10_15_7", "Linux; Android 10", "iPhone; CPU iPhone OS 14_0 like Mac OS X"];
+        const browser = browsers[Math.floor(Math.random() * browsers.length)];
+        const version = (Math.random() * 100).toFixed(1);
+        
+        return `Mozilla/5.0 (${os[Math.floor(Math.random() * os.length)]}) AppleWebKit/537.36 (KHTML, like Gecko) ${browser}/${version} Safari/537.36`;
+    }
 
     function startSending() {
         const phone = document.getElementById("phone").value;
@@ -93,16 +102,21 @@
                 return;
             }
 
-            fetch(url)
-                .then(response => {
-                    sentMessages++;
-                    document.getElementById("response").innerText = `نێردراوە: ${sentMessages}`;
-                    document.getElementById("status").innerHTML += `<div class="message success">Message ${sentMessages}: نێردراوە </div>`;
-                })
-                .catch(error => {
-                    console.error('Error sending message:', error);
-                    document.getElementById("status").innerHTML += `<div class="نەنێردرا">Message ${sentMessages + 1}: Failed to Send</div>`;
-                });
+            fetch(url, {
+                method: 'GET',
+                headers: {
+                    'User-Agent': generateRandomUserAgent() // إضافة User-Agent عشوائي
+                }
+            })
+            .then(response => {
+                sentMessages++;
+                document.getElementById("response").innerText = `نێردراوە: ${sentMessages}`;
+                document.getElementById("status").innerHTML += `<div class="message success">Message ${sentMessages}: نێردراوە </div>`;
+            })
+            .catch(error => {
+                console.error('Error sending message:', error);
+                document.getElementById("status").innerHTML += `<div class="نەنێردرا">Message ${sentMessages + 1}: Failed to Send</div>`;
+            });
         }, 0.1); // ضبط سرعة الإرسال
     }
 </script>
